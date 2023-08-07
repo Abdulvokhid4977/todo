@@ -10,9 +10,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     on<MainEvent>((event, emit) {
       // TODO: implement event handler
     });
-    on<PreviousMonth>(nextMonth);
+    on<PreviousMonth>(_previousMonth);
   }
-  void nextMonth(PreviousMonth event, Emitter<MainState> emit) {
+  void _previousMonth(PreviousMonth event, Emitter<MainState> emit) {
     event.currentDate =
         DateTime(event.currentDate.year, event.currentDate.month - 1, 1);
   }

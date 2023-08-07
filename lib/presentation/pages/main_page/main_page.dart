@@ -21,17 +21,19 @@ class _MainPageState extends State<MainPage> {
 
   List<EventsModel> events = [];
   Future<void> getData() async {
-    print('///////////////////////');
     final dbData = await DBHelper.getData('events');
     events = dbData
-        .map((e) => EventsModel(
+        .map(
+          (e) => EventsModel(
             id: e['id'],
             name: e['name'],
             description: e['description'],
             createdAt: e['createdAt'],
             location: e['location'],
             colorValue: e['colorValue'],
-            eventDate: e['eventDate']))
+            eventDate: e['eventDate'],
+          ),
+        )
         .toList();
   }
 
@@ -55,6 +57,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(events);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -163,30 +166,26 @@ class _MainPageState extends State<MainPage> {
               ],
             ),
           ),
-          Expanded(
-            child: FutureBuilder(
-              future: getData(),
-              builder: (ctx, snapshot) =>
-                  snapshot.connectionState == ConnectionState.waiting
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : SizedBox(
-                          height: 250,
-                          child: ListView.builder(
-                            itemCount: events.length,
-                            itemBuilder: (_, int index) {
-                              return EventTile(
-                                events[index].name,
-                                events[index].description,
-                                events[index].colorValue,
-                                events[index].location,
-                                events[index].eventDate,
-                              );
-                            },
-                          ),
-                        ),
+          SizedBox(
+            height: 120,
+            child:
+    // FutureBuilder(
+            //   future: getData(),
+            //   builder: (ctx, snapshot) {
+            //     return ListView.builder(
+            //       itemCount: events.length,
+            //       itemBuilder: (_, int index) {
+            //         return
+                      GestureDetector(
+                        onTap: (){Navigator.of(context).pushNamed(Routes.details);},
+                        child: const EventTile(
+                        // events[index].name,
+                        // events[index].description,
+                        // events[index].colorValue,
+                        // events[index].location,
+                        // events[index].eventDate,
             ),
+                      ),
           ),
         ],
       ),

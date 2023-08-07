@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/core/constants/constants.dart';
+import 'package:todo_app/core/services/db_helper.dart';
 import 'package:todo_app/core/utils/utils.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -180,6 +181,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 foregroundColor: Colors.black,
               ),
               onPressed: () {
+                DBHelper.delete('b52c3');
                 Navigator.of(context).pop();
               },
               icon: const Icon(
@@ -189,7 +191,7 @@ class _DetailsPageState extends State<DetailsPage> {
               label: const Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "Add",
+                  "Delete",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,

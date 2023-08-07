@@ -4,7 +4,7 @@ part of 'main_bloc.dart';
 abstract class MainEvent extends Equatable {}
 
 class PreviousMonth extends MainEvent{
-  late final DateTime currentDate;
+  DateTime currentDate;
   PreviousMonth(this.currentDate);
   @override
   // TODO: implement props
