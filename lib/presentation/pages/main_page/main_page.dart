@@ -11,7 +11,6 @@ import 'package:todo_app/presentation/bloc/main/main_bloc.dart';
 import 'package:todo_app/presentation/pages/details_page/details_page.dart';
 import 'package:todo_app/presentation/pages/main_page/widgets/calendar.dart';
 import 'package:todo_app/presentation/pages/main_page/widgets/event.dart';
-import 'package:todo_app/presentation/pages/main_page/widgets/main_widgets.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -22,6 +21,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   DateTime selectedDate = DateTime.now();
+  DateTime changedTime= DateTime.now();
   DateTime? selectedMonth;
   int today = DateTime.now().day;
 
@@ -31,9 +31,6 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       events = dbData;
     });
-    if (kDebugMode) {
-      print('this is events content: $events');
-    }
   }
 
   @override
@@ -65,9 +62,7 @@ class _MainPageState extends State<MainPage> {
     if (kDebugMode) {
       print(events);
     }
-    return BlocBuilder<MainBloc, MainState>(
-      builder: (context, state) {
-        return Scaffold(
+    return Scaffold(
           backgroundColor: Colors.white,
           body: Column(
             children: [
@@ -127,24 +122,62 @@ class _MainPageState extends State<MainPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          DateFormat.MMMM().format(selectedMonth ??
-                            DateTime.now(),
-                          ),
+                          DateFormat.MMMM().format(changedTime),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                             color: Colours.blackCustom,
                           ),
                         ),
-                        LRButtons(selectedDate),
+                        Row(
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colours.lightGrey,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(50),
+                                ),
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  _previousMonth();
+                                  // context.read<MainBloc>().add(
+                                  //   CalendarPreviousMonthEvent(selectedDate),
+                                  // );
+                                },
+                                icon: const Icon(Icons.keyboard_arrow_left),
+                              ),
+                            ),
+                            AppUtils.kWidth10,
+                            Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colours.lightGrey,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(50),
+                                ),
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  _nextMonth();
+                                  // context.read<MainBloc>().add(
+                                  //   CalendarNextMonthEvent(selectedDate),
+                                  // );
+                                },
+                                icon: const Icon(Icons.keyboard_arrow_right),
+                              ),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(
+              SizedBox(
                 height: 260,
-                child: Calendar(),
+                child: Calendar(changedTime),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(28, 0, 28, 0),
@@ -205,8 +238,17 @@ class _MainPageState extends State<MainPage> {
               ),
             ],
           ),
-        );
-      },
     );
   }
+  void _previousMonth() {
+    setState(() {
+      changedTime = DateTime(changedTime.year, changedTime.month - 1, 1);
+    });
+  }
+  void _nextMonth() {
+    setState(() {
+      changedTime = DateTime(changedTime.year, changedTime.month + 1, 1);
+    });
+  }
 }
+

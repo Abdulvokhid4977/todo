@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/core/utils/utils.dart';
 
 class Calendar extends StatefulWidget {
-  const Calendar({super.key});
+  final DateTime selectedPeriod;
+  const Calendar(this.selectedPeriod, {super.key});
 
   @override
   State<Calendar> createState() => _CalendarState();
@@ -25,25 +26,13 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  void _previousMonth() {
-    setState(() {
-      _currentDate = DateTime(_currentDate.year, _currentDate.month - 1, 1);
-    });
-  }
-
-  void _nextMonth() {
-    setState(() {
-      _currentDate = DateTime(_currentDate.year, _currentDate.month + 1, 1);
-    });
-  }
-
   List<Widget> _buildCalendarDays() {
     List<Widget> days = [];
 
     DateTime firstDayOfMonth =
-        DateTime(_currentDate.year, _currentDate.month, 1);
+        DateTime(widget.selectedPeriod.year, widget.selectedPeriod.month, 1);
     int daysInMonth =
-        DateTime(_currentDate.year, _currentDate.month + 1, 0).day;
+        DateTime(widget.selectedPeriod.year, widget.selectedPeriod.month + 1, 0).day;
 
     int weekDay = firstDayOfMonth.weekday;
     int currentDay = 1;
@@ -81,6 +70,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('/////////////////////////////////////');
     return Column(
       children: [
         Expanded(
