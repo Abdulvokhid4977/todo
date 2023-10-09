@@ -1,9 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/config/routes/app_routes.dart';
 import 'package:todo_app/core/constants/constants.dart';
 import 'package:todo_app/core/services/db_helper.dart';
+import 'package:todo_app/core/utils/utils.dart';
 import 'package:todo_app/data/models/events_model.dart';
+import 'package:todo_app/presentation/bloc/main/main_bloc.dart';
+import 'package:todo_app/presentation/pages/details_page/details_page.dart';
 import 'package:todo_app/presentation/pages/main_page/widgets/calendar.dart';
 import 'package:todo_app/presentation/pages/main_page/widgets/event.dart';
 import 'package:todo_app/presentation/pages/main_page/widgets/main_widgets.dart';
@@ -17,24 +22,24 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   DateTime selectedDate = DateTime.now();
+  DateTime? selectedMonth;
   int today = DateTime.now().day;
 
   List<EventsModel> events = [];
   Future<void> getData() async {
     final dbData = await DBHelper.getData('events');
-    events = dbData
-        .map(
-          (e) => EventsModel(
-            id: e['id'],
-            name: e['name'],
-            description: e['description'],
-            createdAt: e['createdAt'],
-            location: e['location'],
-            colorValue: e['colorValue'],
-            eventDate: e['eventDate'],
-          ),
-        )
-        .toList();
+    setState(() {
+      events = dbData;
+    });
+    if (kDebugMode) {
+      print('this is events content: $events');
+    }
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
   }
 
   void _datePicker(DateTime selected) {
@@ -57,138 +62,151 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(events);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 60, 0, 35),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        DateFormat.EEEE().format(
-                          DateTime.now(),
-                        ),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colours.blackCustom,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          _datePicker(selectedDate);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              DateFormat("d MMMM y").format(
-                                selectedDate,
-                              ),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 10,
-                                color: Colours.blackCustom,
-                              ),
-                            ),
-                            const Icon(Icons.expand_more)
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.notifications),
-                ),
-              ],
-            ),
-          ),
-          Column(
+    if (kDebugMode) {
+      print(events);
+    }
+    return BlocBuilder<MainBloc, MainState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28),
+                padding: const EdgeInsets.fromLTRB(0, 60, 0, 35),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      DateFormat.MMMM().format(
-                        DateTime.now(),
-                      ),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: Colours.blackCustom,
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            DateFormat.EEEE().format(selectedDate,
+                            ),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Colours.blackCustom,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              _datePicker(selectedDate);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  DateFormat("d MMMM y").format(
+                                    selectedDate,
+                                  ),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 10,
+                                    color: Colours.blackCustom,
+                                  ),
+                                ),
+                                const Icon(Icons.expand_more)
+                              ],
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                    LRButtons(selectedDate),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.notifications),
+                    ),
                   ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(
-            height: 260,
-            child: Calendar(),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(28, 0, 28, 28),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Schedule',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 28),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          DateFormat.MMMM().format(selectedMonth ??
+                            DateTime.now(),
+                          ),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: Colours.blackCustom,
+                          ),
+                        ),
+                        LRButtons(selectedDate),
+                      ],
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(Routes.add);
-                  },
-                  child: const Text('+ Add Event'),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 120,
-            child:
-    // FutureBuilder(
-            //   future: getData(),
-            //   builder: (ctx, snapshot) {
-            //     return ListView.builder(
-            //       itemCount: events.length,
-            //       itemBuilder: (_, int index) {
-            //         return
-                      GestureDetector(
-                        onTap: (){Navigator.of(context).pushNamed(Routes.details);},
-                        child: const EventTile(
-                        // events[index].name,
-                        // events[index].description,
-                        // events[index].colorValue,
-                        // events[index].location,
-                        // events[index].eventDate,
-            ),
+                ],
+              ),
+              const SizedBox(
+                height: 260,
+                child: Calendar(),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(28, 0, 28, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Schedule',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(Routes.add);
+                      },
+                      child: const Text('+ Add Event'),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.separated(
+                    separatorBuilder: (_, i) {
+                      return AppUtils.kHeight14;
+                    },
+                    itemCount: events.length,
+                    itemBuilder: (_, int index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DetailsPage(
+                                eventsModel: events[index],
+                              ),
+                            ),
+                          );
+                        },
+                        child: EventTile(
+                          events[index].id,
+                          events[index].name,
+                          events[index].description,
+                          events[index].colorValue,
+                          events[index].location,
+                          events[index].eventDate,
+                        ),
+                      );
+                    }),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

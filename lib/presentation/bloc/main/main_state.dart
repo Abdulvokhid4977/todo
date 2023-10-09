@@ -7,19 +7,11 @@ class MainInitial extends MainState {
   @override
   List<Object?> get props => [];
 }
+class CalendarMonthChangedState extends MainState {
+  final DateTime currentMonth;
 
-class NextMonthState extends MainState {
-  final DateTime currentDate;
-  NextMonthState(this.currentDate);
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
-}
+  CalendarMonthChangedState(this.currentMonth);
 
-class PreviousMonthState extends MainState {
-  final DateTime currentDate;
-  PreviousMonthState(this.currentDate);
   @override
-  // TODO: implement props
-  List<Object?> get props => [];
+  List<Object?> get props => [currentMonth];
 }

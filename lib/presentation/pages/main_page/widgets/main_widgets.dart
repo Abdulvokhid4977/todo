@@ -7,44 +7,53 @@ import '../../../../core/constants/constants.dart';
 
 class LRButtons extends StatelessWidget {
   final DateTime currentDate;
+
   const LRButtons(this.currentDate, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colours.lightGrey,
-            borderRadius: const BorderRadius.all(
-              Radius.circular(50),
+    return BlocBuilder<MainBloc, MainState>(
+      builder: (ctx, state) {
+        return Row(
+          children: [
+            Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colours.lightGrey,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(50),
+                ),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  context.read<MainBloc>().add(
+                        CalendarPreviousMonthEvent(currentDate),
+                      );
+                },
+                icon: const Icon(Icons.keyboard_arrow_left),
+              ),
             ),
-          ),
-          child: IconButton(
-            onPressed: () {
-              context.read<MainBloc>().add(
-                    PreviousMonth(currentDate),
-                  );
-            },
-            icon: const Icon(Icons.keyboard_arrow_left),
-          ),
-        ),
-        AppUtils.kWidth10,
-        Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colours.lightGrey,
-            borderRadius: const BorderRadius.all(
-              Radius.circular(50),
+            AppUtils.kWidth10,
+            Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colours.lightGrey,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(50),
+                ),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  context.read<MainBloc>().add(
+                        CalendarNextMonthEvent(currentDate),
+                      );
+                },
+                icon: const Icon(Icons.keyboard_arrow_right),
+              ),
             ),
-          ),
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.keyboard_arrow_right),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

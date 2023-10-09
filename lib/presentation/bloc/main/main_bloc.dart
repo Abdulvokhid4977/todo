@@ -7,13 +7,25 @@ part 'main_state.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
   MainBloc() : super(MainInitial()) {
-    on<MainEvent>((event, emit) {
-      // TODO: implement event handler
-    });
-    on<PreviousMonth>(_previousMonth);
+    on<MainEvent>((event, emit) {});
+    on<CalendarNextMonthEvent>(_nextMonth);
+    on<CalendarPreviousMonthEvent>(_previousMonth);
   }
-  void _previousMonth(PreviousMonth event, Emitter<MainState> emit) {
-    event.currentDate =
-        DateTime(event.currentDate.year, event.currentDate.month - 1, 1);
+  void _nextMonth(CalendarNextMonthEvent event, Emitter emit) {
+    emit(
+      CalendarMonthChangedState(
+        DateTime(event.currentMonth.year, event.currentMonth.month + 1, 1),
+      ),
+    );
+  }
+
+  void _previousMonth(CalendarPreviousMonthEvent event, Emitter emit) {
+    emit(
+      CalendarMonthChangedState(
+        DateTime(event.currentMonth.year, event.currentMonth.month - 1, 1),
+      ),
+    );
+    // event.currentDate =
+    //     DateTime(event.currentDate.year, event.currentDate.month - 1, 1);
   }
 }

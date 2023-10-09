@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:todo_app/core/constants/constants.dart';
 import 'package:todo_app/core/services/db_helper.dart';
 import 'package:todo_app/core/utils/utils.dart';
+import 'package:todo_app/data/models/events_model.dart';
 
 class DetailsPage extends StatefulWidget {
-  const DetailsPage({super.key});
+  final EventsModel? eventsModel;
+  const DetailsPage({super.key, this.eventsModel});
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
@@ -13,6 +17,7 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
+    final events = ModalRoute.of(context)?.settings.arguments;
     return Scaffold(
       body: Column(
         children: [
@@ -22,11 +27,11 @@ class _DetailsPageState extends State<DetailsPage> {
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(
                     bottom: Radius.circular(20),
                   ),
-                  color: Colors.blue,
+                  color: Color(widget.eventsModel?.colorValue ?? 0xFF42A5F5),
                 ),
                 child: Column(
                   children: [
@@ -34,7 +39,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          margin: const EdgeInsets.symmetric(vertical: 14),
                           alignment: Alignment.center,
                           decoration: const BoxDecoration(
                             color: Colors.white,
@@ -64,22 +69,22 @@ class _DetailsPageState extends State<DetailsPage> {
                       ],
                     ),
                     AppUtils.kHeight20,
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Something',
-                        style: TextStyle(
+                        widget.eventsModel?.name ?? '',
+                        style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
                     ),
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Something and something',
-                        style: TextStyle(
+                        widget.eventsModel?.description ?? '',
+                        style: const TextStyle(
                           fontSize: 8,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
@@ -87,30 +92,30 @@ class _DetailsPageState extends State<DetailsPage> {
                       ),
                     ),
                     AppUtils.kHeight20,
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.access_time_filled,
                           color: Colors.white,
                         ),
                         Text(
-                          '15:00 -16:00',
-                          style: TextStyle(color: Colors.white),
+                          widget.eventsModel?.eventDate ?? "",
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
                     AppUtils.kHeight10,
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.location_on,
                           color: Colors.white,
                         ),
                         Text(
-                          'Tashkent',
-                          style: TextStyle(color: Colors.white),
+                          widget.eventsModel?.location ?? '',
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
@@ -148,10 +153,10 @@ class _DetailsPageState extends State<DetailsPage> {
                 alignment: Alignment.centerLeft,
                 height: 300,
                 padding: const EdgeInsets.only(top: 28, left: 28),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Description',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
@@ -160,7 +165,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     ),
                     AppUtils.kHeight10,
                     Text(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel ex sit amet neque dignissim mattis non eu est. Etiam pulvinar est mi, et porta magna accumsan nec. Ut vitae urna nisl. Integer gravida sollicitudin massa, ut congue orci posuere sit amet. Aenean laoreet egestas est, ut auctor nulla suscipit non. ',
+                      widget.eventsModel?.description ?? '',
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 10,
@@ -181,7 +186,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 foregroundColor: Colors.black,
               ),
               onPressed: () {
-                DBHelper.delete('b52c3');
+                DBHelper.deleteItem(widget.eventsModel!.id);
                 Navigator.of(context).pop();
               },
               icon: const Icon(

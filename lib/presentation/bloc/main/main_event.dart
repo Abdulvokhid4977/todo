@@ -2,16 +2,18 @@ part of 'main_bloc.dart';
 
 @immutable
 abstract class MainEvent extends Equatable {}
-
-class PreviousMonth extends MainEvent{
-  DateTime currentDate;
-  PreviousMonth(this.currentDate);
+class CalendarNextMonthEvent extends MainEvent {
+  final DateTime currentMonth;
+  CalendarNextMonthEvent(this.currentMonth);
   @override
   // TODO: implement props
-  List<Object?> get props => [];
+  List<Object?> get props => throw UnimplementedError();
 }
-class NextMonth extends MainEvent{
+
+class CalendarPreviousMonthEvent extends MainEvent {
+  final DateTime currentMonth;
+  CalendarPreviousMonthEvent(this.currentMonth);
   @override
   // TODO: implement props
-  List<Object?> get props => [];
+  List<Object?> get props => throw UnimplementedError();
 }

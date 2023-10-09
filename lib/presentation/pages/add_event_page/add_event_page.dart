@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/core/constants/constants.dart';
 import 'package:todo_app/core/services/db_helper.dart';
+import 'package:todo_app/core/utils/utils.dart';
 
 class AddEventPage extends StatefulWidget {
   const AddEventPage({super.key});
@@ -22,8 +23,8 @@ class _AddEventPageState extends State<AddEventPage> {
     'id': UniqueKey().toString(),
     'name': '',
     'description': '',
-    'createdAt': '',
-    'updatedAt': '',
+    'createdAt': DateTime.now().toString(),
+    'updatedAt': DateTime.now().toString(),
     'location': '',
     'colorValue': 0,
     'eventDate': '',
@@ -205,6 +206,7 @@ class _AddEventPageState extends State<AddEventPage> {
                         onChanged: (val) {
                           setState(() {
                             dropDownValue = val;
+                            _addingHandler['colorValue'] = dropDownValue!.value;
                           });
                         }),
                   ),
@@ -245,6 +247,7 @@ class _AddEventPageState extends State<AddEventPage> {
                     _addingHandler['eventDate'] = value;
                   },
                 ),
+                AppUtils.kHeight20,
                 Container(
                   height: 46,
                   margin: const EdgeInsets.fromLTRB(16, 0, 16, 15),

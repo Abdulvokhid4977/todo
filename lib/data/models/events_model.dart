@@ -1,8 +1,9 @@
 class EventsModel {
-  final int id;
+  final String id;
   final String name;
   final String description;
   final String createdAt;
+  final String? updatedAt;
   final String location;
   final int colorValue;
   final String eventDate;
@@ -12,11 +13,12 @@ class EventsModel {
     required this.name,
     required this.description,
     required this.createdAt,
+    this.updatedAt,
     required this.location,
     required this.colorValue,
     required this.eventDate,
   });
-  EventsModel.fromMap(Map<String, dynamic> res)
+  EventsModel.fromMap(Map<String, dynamic> res, this.updatedAt)
       : id = res['id'],
         name = res['name'],
         description = res['description'],
